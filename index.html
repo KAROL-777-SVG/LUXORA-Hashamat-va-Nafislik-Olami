@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LUXORA — Hashamat va Nafislik Olami</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#080808',
+            charcoal: '#111111',
+            carddark: '#161616',
+            gold: {
+              light: '#F3E5AB',
+              DEFAULT: '#D4AF37',
+              dark: '#AA8220',
+              glow: 'rgba(212, 175, 55, 0.35)'
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            display: ['"Cinzel"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #080808;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #D4AF37, #7d6212);
+      border-radius: 9999px;
+    }
+
+    /* Gold Shimmer Text */
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 45%, #AA8220 75%, #F3E5AB 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: goldShine 5s linear infinite;
+    }
+
+    @keyframes goldShine {
+      to {
+        background-position: 200% center;
+      }
+    }
+
+    /* Gold Button Gradient */
+    .btn-gold {
+      background: linear-gradient(135deg, #E5C158 0%, #D4AF37 50%, #B58E22 100%);
+      color: #080808;
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(212, 175, 55, 0.45);
+      filter: brightness(1.06);
+    }
+
+    /* Page View Transition */
+    .view-transition {
+      animation: pageReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes pageReveal {
+      0% {
+        opacity: 0;
+        transform: translateY(18px) scale(0.99);
+        filter: blur(4px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    /* 3D Interactive Card Styling */
+    .tilt-card-wrapper {
+      perspective: 1100px;
+    }
+
+    .tilt-card {
+      transform-style: preserve-3d;
+      transition: transform 0.18s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tilt-card:hover {
+      border-color: rgba(212, 175, 55, 0.55);
+      box-shadow: 0 22px 45px -12px rgba(0, 0, 0, 0.85), 0 0 25px rgba(212, 175, 55, 0.18);
+    }
+
+    .tilt-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(243, 229, 171, 0.22), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      z-index: 20;
+    }
+
+    .tilt-card:hover .tilt-glare {
+      opacity: 1;
+    }
+
+    .tilt-content-lift {
+      transform: translateZ(22px);
+    }
+
+    /* Cursor Trail Canvas & Custom Ring */
+    #cursor-trail-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    #custom-cursor-ring {
+      position: fixed;
+      width: 34px;
+      height: 34px;
+      border: 1.5px solid rgba(212, 175, 55, 0.75);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: width 0.22s ease, height 0.22s ease, background-color 0.22s ease, border-color 0.22s ease;
+      z-index: 9999;
+      mix-blend-mode: screen;
+    }
+
+    #custom-cursor-ring.hovered {
+      width: 54px;
+      height: 54px;
+      background-color: rgba(212, 175, 55, 0.14);
+      border-color: #F3E5AB;
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      #custom-cursor-ring, #cursor-trail-canvas {
+        display: none;
+      }
+    }
+
+    /* Glassmorphism Dark */
+    .glass-dark {
+      background: rgba(14, 14, 14, 0.84);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.16);
+    }
+
+    /* Subtle Hero Zoom */
+    @keyframes slowZoom {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+    .animate-hero-bg {
+      animation: slowZoom 22s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-obsidian text-white selection:bg-gold selection:text-obsidian antialiased">
+
+  <!-- Gold Cursor Trail & Custom Ring -->
+  <canvas id="cursor-trail-canvas"></canvas>
+  <div id="custom-cursor-ring" class="hidden md:block"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-[100] flex flex-col gap-3 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+
+  <!-- Top Luxury Announcement Bar -->
+  <div class="bg-gradient-to-r from-obsidian via-[#1a1508] to-obsidian border-b border-gold/20 text-[11px] sm:text-xs tracking-[0.2em] uppercase text-gold-light/90 py-2 px-4 text-center">
+    <span>✦ Bepul VIP Yetkazib Berish $500 dan yuqori buyurtmalar uchun • Promo-kod: <strong class="text-gold font-semibold">LUXORA10</strong> (-10%) ✦</span>
+  </div>
+
+  <!-- Main Sticky Navigation Header -->
+  <header class="sticky top-0 z-50 glass-dark transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menyu" class="lg:hidden p-2.5 rounded-xl text-white hover:text-gold hover:bg-white/5 transition">
+          <i class="fa-solid fa-bars-staggered text-xl"></i>
+        </button>
+
+        <!-- Brand Logo -->
+        <a href="#home" onclick="navigateTo('home'); return false;" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-full border border-gold/60 flex items-center justify-center bg-gradient-to-br from-gold/20 to-transparent group-hover:border-gold transition">
+            <span class="font-display text-gold font-bold text-lg">L</span>
+          </div>
+          <div>
+            <span class="font-display text-2xl sm:text-[26px] font-bold tracking-[0.22em] gold-gradient-text block leading-none">LUXORA</span>
+            <span class="text-[9px] tracking-[0.35em] text-neutral-400 uppercase block mt-1">Haute Couture &amp; Luxury</span>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-7 text-xs font-medium tracking-[0.14em] uppercase">
+          <button onclick="navigateTo('home')" data-nav="home" class="nav-link text-gold transition py-2 relative">Bosh sahifa</button>
+          <button onclick="navigateTo('shop')" data-nav="shop" class="nav-link text-neutral-300 hover:text-gold transition py-2 relative">Do'kon</button>
+          <button onclick="navigateTo('categories')" data-nav="categories" class="nav-link text-neutral-300 hover:text-gold transition py-2 relative">Kategoriyalar</button>
+          <button onclick="navigateTo('new-arrivals')" data-nav="new-arrivals" class="nav-link text-neutral-300 hover:text-gold transition py-2 relative flex items-center gap-1.5">
+            Yangi kelganlar <span class="w-1.5 h-1.5 rounded-full bg-gold animate-pulse"></span>
+          </button>
+          <button onclick="navigateTo('trending')" data-nav="trending" class="nav-link text-neutral-300 hover:text-gold transition py-2 relative">Trenddagilar</button>
+        </nav>
+
+        <!-- Action Icons -->
+        <div class="flex items-center gap-1.5 sm:gap-3">
+          <!-- Quick Search Trigger -->
+          <button onclick="navigateTo('shop', { focusSearch: true })" title="Qidirish" class="p-2.5 rounded-full text-neutral-300 hover:text-gold hover:bg-white/5 transition">
+            <i class="fa-solid fa-magnifying-glass text-base"></i>
+          </button>
+
+          <!-- Wishlist Button -->
+          <button onclick="navigateTo('wishlist')" title="Sevimlilar" class="relative p-2.5 rounded-full text-neutral-300 hover:text-gold hover:bg-white/5 transition">
+            <i class="fa-regular fa-heart text-base"></i>
+            <span id="wishlist-badge" class="hidden absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gold text-obsidian text-[10px] font-bold flex items-center justify-center">0</span>
+          </button>
+
+          <!-- Cart Drawer Trigger -->
+          <button onclick="openCartDrawer()" title="Savatcha" class="relative p-2.5 rounded-full text-neutral-300 hover:text-gold hover:bg-white/5 transition">
+            <i class="fa-solid fa-bag-shopping text-base"></i>
+            <span id="cart-badge" class="hidden absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gold text-obsidian text-[10px] font-bold flex items-center justify-center">0</span>
+          </button>
+
+          <!-- My Account / Admin -->
+          <button onclick="navigateTo('account')" title="Shaxsiy kabinet va Admin" class="flex items-center gap-2 pl-2.5 pr-3.5 py-2 rounded-full border border-gold/30 hover:border-gold bg-white/[0.03] hover:bg-gold/10 text-xs font-medium tracking-wider transition">
+            <i class="fa-regular fa-user text-gold"></i>
+            <span class="hidden sm:inline text-neutral-200">Kabinet</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-[#0d0d0d] border-t border-gold/20 px-6 py-5 space-y-3">
+      <button onclick="navigateTo('home'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-neutral-200 hover:text-gold border-b border-white/5">Bosh sahifa</button>
+      <button onclick="navigateTo('shop'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-neutral-200 hover:text-gold border-b border-white/5">Do'kon</button>
+      <button onclick="navigateTo('categories'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-neutral-200 hover:text-gold border-b border-white/5">Kategoriyalar</button>
+      <button onclick="navigateTo('new-arrivals'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-neutral-200 hover:text-gold border-b border-white/5">Yangi kelganlar</button>
+      <button onclick="navigateTo('trending'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-neutral-200 hover:text-gold border-b border-white/5">Trenddagilar</button>
+      <button onclick="navigateTo('wishlist'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-neutral-200 hover:text-gold border-b border-white/5">Sevimlilar ro'yxati</button>
+      <button onclick="navigateTo('cart'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-neutral-200 hover:text-gold border-b border-white/5">Savatcha</button>
+      <button onclick="navigateTo('account'); toggleMobileMenu()" class="block w-full text-left py-2.5 text-sm uppercase tracking-widest text-gold font-semibold">Shaxsiy Kabinet &amp; Admin</button>
+    </div>
+  </header>
+
+  <!-- MAIN SPA DYNAMIC CONTENT CONTAINER -->
+  <main id="app-root" class="min-h-[78vh]"></main>
+
+  <!-- SLIDE-OVER SHOPPING CART DRAWER -->
+  <div id="cart-drawer-overlay" onclick="closeCartDrawer()" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-[70] hidden opacity-0 transition-opacity duration-300"></div>
+  <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-[#0e0e0e] border-l border-gold/25 z-[80] transform translate-x-full transition-transform duration-300 ease-out flex flex-col shadow-2xl">
+    <!-- Drawer Header -->
+    <div class="p-6 border-b border-white/10 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-bag-shopping text-gold text-lg"></i>
+        <h2 class="font-serif text-xl font-semibold tracking-wide">Sizning Savatchangiz</h2>
+      </div>
+      <button onclick="closeCartDrawer()" class="w-9 h-9 rounded-full bg-white/5 hover:bg-gold/20 text-neutral-400 hover:text-gold flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Drawer Items -->
+    <div id="cart-drawer-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+
+    <!-- Drawer Footer -->
+    <div id="cart-drawer-footer" class="p-6 border-t border-gold/20 bg-[#121212] space-y-4"></div>
+  </aside>
+
+  <!-- LUXURY FOOTER -->
+  <footer class="bg-[#050505] border-t border-gold/20 mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+        <!-- Brand Info -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-full border border-gold flex items-center justify-center">
+              <span class="font-display text-gold font-bold">L</span>
+            </div>
+            <span class="font-display text-2xl font-bold tracking-[0.22em] gold-gradient-text">LUXORA</span>
+          </div>
+          <p class="text-sm text-neutral-400 leading-relaxed">
+            Dunyoning eng sara hashamatli brendlari, eksklyuziv soatlar, parfyumeriya va yuqori moda kolleksiyalarining rasmiy raqamli butigi.
+          </p>
+          <div class="flex items-center gap-3 pt-2">
+            <a href="#instagram" onclick="showToast('LUXORA Instagram sahifasi', 'info'); return false;" class="w-9 h-9 rounded-full border border-white/15 hover:border-gold flex items-center justify-center text-neutral-400 hover:text-gold transition"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#telegram" onclick="showToast('LUXORA VIP Telegram kanali', 'info'); return false;" class="w-9 h-9 rounded-full border border-white/15 hover:border-gold flex items-center justify-center text-neutral-400 hover:text-gold transition"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#youtube" onclick="showToast('LUXORA Fashion Show', 'info'); return false;" class="w-9 h-9 rounded-full border border-white/15 hover:border-gold flex items-center justify-center text-neutral-400 hover:text-gold transition"><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h4 class="font-display text-xs uppercase tracking-[0.22em] text-gold mb-5">Bo'limlar</h4>
+          <ul class="space-y-3 text-sm text-neutral-400">
+            <li><button onclick="navigateTo('home')" class="hover:text-gold transition">Bosh sahifa</button></li>
+            <li><button onclick="navigateTo('shop')" class="hover:text-gold transition">Barcha mahsulotlar</button></li>
+            <li><button onclick="navigateTo('new-arrivals')" class="hover:text-gold transition">Yangi kolleksiya 2026</button></li>
+            <li><button onclick="navigateTo('trending')" class="hover:text-gold transition">Trenddagi buyumlar</button></li>
+            <li><button onclick="navigateTo('categories')" class="hover:text-gold transition">Kategoriyalar</button></li>
+          </ul>
+        </div>
+
+        <!-- Customer Service -->
+        <div>
+          <h4 class="font-display text-xs uppercase tracking-[0.22em] text-gold mb-5">Mijozlar Uchun</h4>
+          <ul class="space-y-3 text-sm text-neutral-400">
+            <li><button onclick="navigateTo('account')" class="hover:text-gold transition">Shaxsiy kabinet</button></li>
+            <li><button onclick="navigateTo('account', { tab: 'orders' })" class="hover:text-gold transition">Buyurtmalar tarixi</button></li>
+            <li><button onclick="navigateTo('wishlist')" class="hover:text-gold transition">Sevimlilar ro'yxati</button></li>
+            <li><button onclick="navigateTo('cart')" class="hover:text-gold transition">Savatcha &amp; Hisob-kitob</button></li>
+            <li><button onclick="navigateTo('account', { tab: 'admin' })" class="hover:text-gold transition text-gold-light/80">Admin Panel (Mahsulotlar)</button></li>
+          </ul>
+        </div>
+
+        <!-- VIP Concierge -->
+        <div class="space-y-4">
+          <h4 class="font-display text-xs uppercase tracking-[0.22em] text-gold mb-5">VIP Konsyerj Xizmati</h4>
+          <p class="text-sm text-neutral-400">Shaxsiy stilist maslahati va yopiq auktsionlarga taklifnoma olish uchun obuna bo'ling.</p>
+          <form onsubmit="handleNewsletter(event)" class="flex gap-2">
+            <input type="email" required placeholder="Email manzilingiz..." class="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-gold focus:outline-none text-sm text-white placeholder-neutral-500" />
+            <button type="submit" class="btn-gold px-4 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider shrink-0">A'zo</button>
+          </form>
+          <p class="text-xs text-neutral-500"><i class="fa-solid fa-shield-halved text-gold mr-1.5"></i> 100% Original Sertifikatlangan Mahsulotlar</p>
+        </div>
+      </div>
+
+      <div class="border-t border-white/10 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+        <p>© 2026 LUXORA Luxury House. Barcha huquqlar himoyalangan.</p>
+        <div class="flex items-center gap-4 text-neutral-400">
+          <span><i class="fa-brands fa-cc-visa text-lg"></i></span>
+          <span><i class="fa-brands fa-cc-mastercard text-lg"></i></span>
+          <span><i class="fa-brands fa-cc-amex text-lg"></i></span>
+          <span class="text-gold/80 font-medium">UZCARD / HUMO VIP</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT APPLICATION ENGINE -->
+  <script>
+    /* ==========================================================================
+       1. INITIAL LUXURY CATALOG DATA & LOCALSTORAGE STATE MANAGEMENT
+       ========================================================================== */
+    const STORAGE_KEYS = {
+      PRODUCTS: 'luxora_products_v1',
+      CART: 'luxora_cart_v1',
+      WISHLIST: 'luxora_wishlist_v1',
+      ORDERS: 'luxora_orders_v1',
+      USER: 'luxora_user_v1',
+      PROMO: 'luxora_promo_v1'
+    };
+
+    const CATEGORIES_META = [
+      {
+        id: 'Soatlar',
+        title: 'Soatlar',
+        subtitle: 'Shveysariya Mexanikasi',
+        image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=80',
+        icon: 'fa-clock'
+      },
+      {
+        id: 'Sumkalar',
+        title: 'Sumkalar',
+        subtitle: 'Italiya Charm San’ati',
+        image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80',
+        icon: 'fa-bag-shopping'
+      },
+      {
+        id: 'Parfyumeriya',
+        title: 'Parfyumeriya',
+        subtitle: 'Noyob Sharqona Iforlar',
+        image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80',
+        icon: 'fa-spray-can-sparkles'
+      },
+      {
+        id: 'Zargarlik',
+        title: 'Zargarlik',
+        subtitle: '18K Oltin va Brillant',
+        image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80',
+        icon: 'fa-gem'
+      },
+      {
+        id: 'Kiyimlar',
+        title: 'Kiyimlar',
+        subtitle: 'Haute Couture Kolleksiya',
+        image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=80',
+        icon: 'fa-shirt'
+      },
+      {
+        id: 'Ko\'zoynaklar',
+        title: 'Ko\'zoynaklar',
+        subtitle: 'Titan va Oltin Gardish',
+        image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80',
+        icon: 'fa-glasses'
+      }
+    ];
+
+    const DEFAULT_PRODUCTS = [
+      {
+        id: 'lux-101',
+        name: 'Aurelius Royal Chronograph 18K',
+        category: 'Soatlar',
+        price: 4850,
+        oldPrice: 5400,
+        rating: 4.9,
+        sales: 142,
+        isNew: true,
+        isTrending: true,
+        badge: 'YANGI',
+        image: 'https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?auto=format&fit=crop&w=900&q=80',
+        sizes: ['40mm', '42mm'],
+        material: '18K Pushti Oltin & Sapfir Shisha',
+        description: 'Shveysariyaning eng mohir ustalari tomonidan qo‘lda yig‘ilgan mexanik xronograf. 72 soatlik quvvat zaxirasi va timsoh terisidan ishlangan tasma bilan jihozlangan.'
+      },
+      {
+        id: 'lux-102',
+        name: 'Milano Noir Crocodile Tote',
+        category: 'Sumkalar',
+        price: 3200,
+        oldPrice: null,
+        rating: 5.0,
+        sales: 198,
+        isNew: false,
+        isTrending: true,
+        badge: 'TREND',
+        image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=80',
+        sizes: ['Medium', 'Large'],
+        material: '100% Tabiiy Italiya Charmi & 24K Qoplama',
+        description: 'Milanda qo‘lda tikilgan eksklyuziv qora sumka. Oltin qulf mexanizmi va ipak ichki qoplamasi bilan har qanday kechki obrazga hashamat bag‘ishlaydi.'
+      },
+      {
+        id: 'lux-103',
+        name: 'Oud Imperial Elixir 100ml',
+        category: 'Parfyumeriya',
+        price: 420,
+        oldPrice: 490,
+        rating: 4.8,
+        sales: 315,
+        isNew: true,
+        isTrending: true,
+        badge: 'YANGI',
+        image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=900&q=80',
+        sizes: ['50ml', '100ml'],
+        material: 'Tabiiy Ud, Za’faron va Ambergris',
+        description: '24 soat davomida terida saqlanib qoluvchi noyob sharqona-yog‘ochli parfyum. Oltin bezakli billur flakon ichida taqdim etiladi.'
+      },
+      {
+        id: 'lux-104',
+        name: 'Celestia Diamond Solitaire Necklace',
+        category: 'Zargarlik',
+        price: 6400,
+        oldPrice: 7100,
+        rating: 5.0,
+        sales: 87,
+        isNew: true,
+        isTrending: false,
+        badge: 'EKSKLYUZIV',
+        image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=80',
+        sizes: ['42cm', '45cm'],
+        material: '750 Proba Oltin & VVS1 Brillant (1.5 ct)',
+        description: 'GIA sertifikatiga ega sof brillant bilan bezatilgan nafis marjon. Yorug‘likning har bir nurida kamalakdek jilolanadi.'
+      },
+      {
+        id: 'lux-105',
+        name: 'Obsidian Silk Evening Blazer',
+        category: 'Kiyimlar',
+        price: 1890,
+        oldPrice: null,
+        rating: 4.9,
+        sales: 124,
+        isNew: false,
+        isTrending: true,
+        badge: 'TREND',
+        image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=900&q=80',
+        sizes: ['S', 'M', 'L', 'XL'],
+        material: 'Italiya Jun va Sof Ipak Aralashmasi',
+        description: 'Maxsus bichimdagi qora smoking-pidjak. Oltin tugmalar va atlas yoqasi bilan rasmiy kechalar uchun mukammal tanlov.'
+      },
+      {
+        id: 'lux-106',
+        name: 'Solstice Gold Aviator Sunglasses',
+        category: 'Ko\'zoynaklar',
+        price: 680,
+        oldPrice: 750,
+        rating: 4.7,
+        sales: 210,
+        isNew: true,
+        isTrending: false,
+        badge: 'YANGI',
+        image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=900&q=80',
+        sizes: ['Standart'],
+        material: 'Yaponiya Titani & Polarizatsiyalangan Linza',
+        description: 'Ultra-yengil titan gardishli va 18 karatli oltin suvi yuritilgan quyoshdan himoya ko‘zoynagi. UV400 to‘liq himoya.'
+      },
+      {
+        id: 'lux-107',
+        name: 'Sovereign Tourbillon Skeleton',
+        category: 'Soatlar',
+        price: 9200,
+        oldPrice: 10500,
+        rating: 5.0,
+        sales: 54,
+        isNew: true,
+        isTrending: true,
+        badge: 'LIMITED',
+        image: 'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=80',
+        sizes: ['41mm'],
+        material: 'Qora Keramika & Oltin Mexanizm',
+        description: 'Shaffof siferblat orqali har bir g‘ildirak harakatini ko‘rish imkonini beruvchi san’at asari. Dunyo bo‘ylab atigi 100 dona ishlab chiqarilgan.'
+      },
+      {
+        id: 'lux-108',
+        name: 'Velvet Rose & Gold Clutch',
+        category: 'Sumkalar',
+        price: 1450,
+        oldPrice: 1690,
+        rating: 4.8,
+        sales: 163,
+        isNew: false,
+        isTrending: true,
+        badge: 'TREND',
+        image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=900&q=80',
+        sizes: ['One Size'],
+        material: 'Fransuz Baxmali & Oltin Zanjir',
+        description: 'Kechki tadbirlar uchun mo‘ljallangan ixcham va hashamatli klatch. Echib olinadigan oltin zanjir tasmasi mavjud.'
+      },
+      {
+        id: 'lux-109',
+        name: 'Nocturne Amber Extrait de Parfum',
+        category: 'Parfyumeriya',
+        price: 360,
+        oldPrice: null,
+        rating: 4.9,
+        sales: 276,
+        isNew: false,
+        isTrending: true,
+        badge: 'BESTSELLER',
+        image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=900&q=80',
+        sizes: ['75ml', '100ml'],
+        material: 'Qora Vanil, Bergamot va Sandal',
+        description: 'Sirli va jozibador oqshomlar uchun yaratilgan chuqur ifor. Har bir tomchisi hashamat hissini uyg‘otadi.'
+      },
+      {
+        id: 'lux-110',
+        name: 'Empress Gold Cuff Bracelet',
+        category: 'Zargarlik',
+        price: 2750,
+        oldPrice: 3100,
+        rating: 4.8,
+        sales: 95,
+        isNew: true,
+        isTrending: false,
+        badge: 'YANGI',
+        image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=900&q=80',
+        sizes: ['S/M', 'M/L'],
+        material: '18K Sariq Oltin',
+        description: 'Geometrik chiziqlar va silliq jilo uyg‘unligidagi zamonaviy bilaguzuk. Kundalik va tantanali obrazlar uchun mos.'
+      },
+      {
+        id: 'lux-111',
+        name: 'Cashmere Trench Coat Noir',
+        category: 'Kiyimlar',
+        price: 2490,
+        oldPrice: 2800,
+        rating: 4.9,
+        sales: 112,
+        isNew: true,
+        isTrending: true,
+        badge: 'YANGI',
+        image: 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=80',
+        sizes: ['S', 'M', 'L'],
+        material: '100% Mo‘g‘ul Kashmiri',
+        description: 'Nihoyatda yumshoq va issiq kashmir palto. Klassik siluet va belbog‘dagi oltin to‘qa bilan ajralib turadi.'
+      },
+      {
+        id: 'lux-112',
+        name: 'Monarch Rimless Gold Frames',
+        category: 'Ko\'zoynaklar',
+        price: 590,
+        oldPrice: null,
+        rating: 4.7,
+        sales: 148,
+        isNew: false,
+        isTrending: false,
+        badge: 'KLASSIKA',
+        image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=900&q=80',
+        sizes: ['Standart'],
+        material: 'Oltin Qoplamali Po‘lat',
+        description: 'Minimalistik gardishsiz dizayn va yengil tutqichlar. Intellektual uslub va nufuz ramzi.'
+      }
+    ];
+
+    const DEFAULT_USER = {
+      name: 'Amirxon Valiyev',
+      email: 'amirxon.vip@luxora.uz',
+      phone: '+998 90 123 45 67',
+      city: 'Toshkent',
+      tier: 'BLACK DIAMOND VIP'
+    };
+
+    // Application State
+    let state = {
+      currentView: 'home',
+      selectedProductId: null,
+      products: [],
+      cart: [],
+      wishlist: [],
+      orders: [],
+      user: { ...DEFAULT_USER },
+      promoCode: '',
+      filters: {
+        search: '',
+        category: 'Barchasi',
+        sort: 'featured',
+        maxPrice: 12000
+      },
+      accountTab: 'profile',
+      editingProductId: null
+    };
+
+    /* ==========================================================================
+       2. LOCALSTORAGE SYNC HELPERS
+       ========================================================================== */
+    function loadState() {
+      try {
+        const savedProducts = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+        state.products = savedProducts ? JSON.parse(savedProducts) : [...DEFAULT_PRODUCTS];
+        if (!savedProducts) saveProducts();
+
+        const savedCart = localStorage.getItem(STORAGE_KEYS.CART);
+        state.cart = savedCart ? JSON.parse(savedCart) : [];
+
+        const savedWishlist = localStorage.getItem(STORAGE_KEYS.WISHLIST);
+        state.wishlist = savedWishlist ? JSON.parse(savedWishlist) : ['lux-101', 'lux-104'];
+
+        const savedOrders = localStorage.getItem(STORAGE_KEYS.ORDERS);
+        state.orders = savedOrders ? JSON.parse(savedOrders) : [
+          {
+            id: 'ORD-88412',
+            date: '2026-11-12 18:40',
+            status: 'Yetkazib berildi',
+            total: 420,
+            items: [{ id: 'lux-103', name: 'Oud Imperial Elixir 100ml', qty: 1, price: 420, size: '100ml' }],
+            customer: 'Amirxon Valiyev',
+            address: 'Toshkent sh., Amir Temur shoh ko‘chasi, 15'
+          }
+        ];
+
+        const savedUser = localStorage.getItem(STORAGE_KEYS.USER);
+        state.user = savedUser ? JSON.parse(savedUser) : { ...DEFAULT_USER };
+
+        const savedPromo = localStorage.getItem(STORAGE_KEYS.PROMO);
+        state.promoCode = savedPromo || '';
+      } catch (e) {
+        console.error('LocalStorage o‘qishda xatolik:', e);
+        state.products = [...DEFAULT_PRODUCTS];
+      }
+      updateHeaderBadges();
+    }
+
+    function saveProducts() {
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(state.products));
+    }
+
+    function saveCart() {
+      localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(state.cart));
+      updateHeaderBadges();
+    }
+
+    function saveWishlist() {
+      localStorage.setItem(STORAGE_KEYS.WISHLIST, JSON.stringify(state.wishlist));
+      updateHeaderBadges();
+    }
+
+    function saveOrders() {
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(state.orders));
+    }
+
+    function saveUser() {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(state.user));
+    }
+
+    function savePromo() {
+      localStorage.setItem(STORAGE_KEYS.PROMO, state.promoCode);
+    }
+
+    /* ==========================================================================
+       3. UTILITY & FORMATTING FUNCTIONS
+       ========================================================================== */
+    function formatPrice(amount) {
+      return '$' + Number(amount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    }
+
+    function getFallbackImage(title = 'LUXORA') {
+      const encoded = encodeURIComponent(title.slice(0, 18));
+      return `https://placehold.co/800x900/121212/D4AF37?text=${encoded}`;
+    }
+
+    function showToast(message, type = 'gold') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+
+      const icons = {
+        gold: 'fa-crown text-gold',
+        success: 'fa-circle-check text-emerald-400',
+        error: 'fa-circle-exclamation text-rose-400',
+        info: 'fa-sparkles text-gold-light'
+      };
+
+      toast.className = 'pointer-events-auto flex items-center gap-3.5 px-5 py-4 rounded-2xl bg-[#141414]/95 backdrop-blur-xl border border-gold/40 shadow-[0_12px_35px_rgba(0,0,0,0.85)] text-sm text-white transform translate-y-4 opacity-0 transition-all duration-300';
+      toast.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-gold/15 flex items-center justify-center shrink-0">
+          <i class="fa-solid ${icons[type] || icons.gold}"></i>
+        </div>
+        <div class="flex-1 font-medium leading-snug">${message}</div>
+      `;
+
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 320);
+      }, 3200);
+    }
+
+    function updateHeaderBadges() {
+      const totalCartCount = state.cart.reduce((sum, item) => sum + item.qty, 0);
+      const cartBadge = document.getElementById('cart-badge');
+      if (cartBadge) {
+        cartBadge.textContent = totalCartCount;
+        cartBadge.classList.toggle('hidden', totalCartCount === 0);
+      }
+
+      const wishBadge = document.getElementById('wishlist-badge');
+      if (wishBadge) {
+        wishBadge.textContent = state.wishlist.length;
+        wishBadge.classList.toggle('hidden', state.wishlist.length === 0);
+      }
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    function handleNewsletter(e) {
+      e.preventDefault();
+      e.target.reset();
+      showToast('Tabriklaymiz! Siz LUXORA VIP klubiga muvaffaqiyatli obuna bo‘ldingiz.', 'success');
+    }
+
+    /* ==========================================================================
+       4. CART, WISHLIST & ORDER ACTIONS
+       ========================================================================== */
+    function addToCart(productId, qty = 1, size = null) {
+      const product = state.products.find(p => p.id === productId);
+      if (!product) return;
+
+      const selectedSize = size || (product.sizes && product.sizes[0]) || 'Standart';
+      const existingIndex = state.cart.findIndex(item => item.id === productId && item.size === selectedSize);
+
+      if (existingIndex > -1) {
+        state.cart[existingIndex].qty += qty;
+      } else {
+        state.cart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          category: product.category,
+          size: selectedSize,
+          qty: qty
+        });
+      }
+
+      saveCart();
+      renderCartDrawer();
+      showToast(`"${product.name}" savatchaga qo‘shildi`, 'gold');
+    }
+
+    function updateCartQty(index, delta) {
+      if (!state.cart[index]) return;
+      state.cart[index].qty += delta;
+      if (state.cart[index].qty <= 0) {
+        state.cart.splice(index, 1);
+      }
+      saveCart();
+      renderCartDrawer();
+      if (state.currentView === 'cart' || state.currentView === 'checkout') {
+        renderCurrentView();
+      }
+    }
+
+    function removeFromCart(index) {
+      const removed = state.cart[index];
+      state.cart.splice(index, 1);
+      saveCart();
+      renderCartDrawer();
+      if (state.currentView === 'cart' || state.currentView === 'checkout') {
+        renderCurrentView();
+      }
+      if (removed) {
+        showToast(`"${removed.name}" savatchadan olib tashlandi`, 'info');
+      }
+    }
+
+    function toggleWishlist(productId) {
+      const product = state.products.find(p => p.id === productId);
+      if (!product) return;
+
+      const idx = state.wishlist.indexOf(productId);
+      if (idx > -1) {
+        state.wishlist.splice(idx, 1);
+        showToast(`"${product.name}" sevimlilardan olib tashlandi`, 'info');
+      } else {
+        state.wishlist.push(productId);
+        showToast(`"${product.name}" sevimlilarga saqlandi`, 'gold');
+      }
+
+      saveWishlist();
+      renderCurrentView();
+    }
+
+    function calculateCartTotals() {
+      const subtotal = state.cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const hasDiscount = state.promoCode.trim().toUpperCase() === 'LUXORA10';
+      const discount = hasDiscount ? Math.round(subtotal * 0.1) : 0;
+      const afterDiscount = subtotal - discount;
+      const shipping = subtotal === 0 ? 0 : (afterDiscount >= 500 ? 0 : 35);
+      const total = afterDiscount + shipping;
+      return { subtotal, discount, shipping, total, hasDiscount };
+    }
+
+    function applyPromoCode(codeInput) {
+      const code = (codeInput || '').trim().toUpperCase();
+      if (code === 'LUXORA10') {
+        state.promoCode = 'LUXORA10';
+        savePromo();
+        showToast('LUXORA10 promo-kodi faollashtirildi! 10% chegirma berildi.', 'success');
+      } else if (!code) {
+        state.promoCode = '';
+        savePromo();
+      } else {
+        showToast('Noto‘g‘ri promo-kod. Sinab ko‘ring: LUXORA10', 'error');
+      }
+      renderCartDrawer();
+      if (state.currentView === 'cart' || state.currentView === 'checkout') {
+        renderCurrentView();
+      }
+    }
+
+    /* ==========================================================================
+       5. CART SLIDE-OVER DRAWER
+       ========================================================================== */
+    function openCartDrawer() {
+      renderCartDrawer();
+      const overlay = document.getElementById('cart-drawer-overlay');
+      const drawer = document.getElementById('cart-drawer');
+      overlay.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        overlay.classList.remove('opacity-0');
+        drawer.classList.remove('translate-x-full');
+      });
+    }
+
+    function closeCartDrawer() {
+      const overlay = document.getElementById('cart-drawer-overlay');
+      const drawer = document.getElementById('cart-drawer');
+      overlay.classList.add('opacity-0');
+      drawer.classList.add('translate-x-full');
+      setTimeout(() => {
+        overlay.classList.add('hidden');
+      }, 300);
+    }
+
+    function renderCartDrawer() {
+      const itemsEl = document.getElementById('cart-drawer-items');
+      const footerEl = document.getElementById('cart-drawer-footer');
+      if (!itemsEl || !footerEl) return;
+
+      if (state.cart.length === 0) {
+        itemsEl.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-center py-12">
+            <div class="w-20 h-20 rounded-full border border-gold/25 bg-gold/5 flex items-center justify-center mb-5">
+              <i class="fa-solid fa-bag-shopping text-3xl text-gold/70"></i>
+            </div>
+            <h3 class="font-serif text-xl text-white mb-2">Savatchangiz bo‘sh</h3>
+            <p class="text-sm text-neutral-400 max-w-xs mb-6">Kolleksiyamizdagi eksklyuziv mahsulotlarni kashf eting va o‘zingizga mosini tanlang.</p>
+            <button onclick="closeCartDrawer(); navigateTo('shop');" class="btn-gold px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest">
+              Xaridni boshlash
+            </button>
+          </div>
+        `;
+        footerEl.innerHTML = '';
+        return;
+      }
+
+      itemsEl.innerHTML = state.cart.map((item, idx) => `
+        <div class="flex gap-4 p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-gold/30 transition">
+          <img src="${item.image}" onerror="this.src='${getFallbackImage(item.name)}'" alt="${item.name}" class="w-20 h-24 object-cover rounded-xl bg-neutral-900 shrink-0" />
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2">
+              <h4 class="font-serif text-sm font-semibold text-white truncate">${item.name}</h4>
+              <button onclick="removeFromCart(${idx})" class="text-neutral-500 hover:text-rose-400 transition text-xs p-1">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+            <p class="text-xs text-neutral-400 mt-0.5">${item.category} • O‘lcham: <span class="text-gold-light">${item.size}</span></p>
+            <div class="flex items-center justify-between mt-3">
+              <span class="font-semibold text-gold text-sm">${formatPrice(item.price * item.qty)}</span>
+              <div class="flex items-center gap-2 bg-black/60 border border-white/15 rounded-full px-2 py-1">
+                <button onclick="updateCartQty(${idx}, -1)" class="w-5 h-5 rounded-full hover:bg-gold/20 text-neutral-300 hover:text-gold text-xs flex items-center justify-center">-</button>
+                <span class="text-xs font-semibold w-5 text-center">${item.qty}</span>
+                <button onclick="updateCartQty(${idx}, 1)" class="w-5 h-5 rounded-full hover:bg-gold/20 text-neutral-300 hover:text-gold text-xs flex items-center justify-center">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      const { subtotal, discount, shipping, total, hasDiscount } = calculateCartTotals();
+
+      footerEl.innerHTML = `
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between text-neutral-400">
+            <span>Oraliq summa:</span>
+            <span class="text-white">${formatPrice(subtotal)}</span>
+          </div>
+          ${hasDiscount ? `
+            <div class="flex justify-between text-emerald-400 text-xs">
+              <span>Chegirma (LUXORA10 -10%):</span>
+              <span>-${formatPrice(discount)}</span>
+            </div>
+          ` : ''}
+          <div class="flex justify-between text-neutral-400">
+            <span>VIP Yetkazib berish:</span>
+            <span class="text-gold-light">${shipping === 0 ? 'Bepul' : formatPrice(shipping)}</span>
+          </div>
+          <div class="flex justify-between text-base font-bold pt-2 border-t border-white/10">
+            <span>Jami to‘lov:</span>
+            <span class="text-gold text-lg">${formatPrice(total)}</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 pt-1">
+          <button onclick="closeCartDrawer(); navigateTo('cart');" class="px-4 py-3 rounded-xl border border-gold/40 hover:border-gold text-gold text-xs font-semibold uppercase tracking-wider transition">
+            Savatchani ko‘rish
+          </button>
+          <button onclick="closeCartDrawer(); navigateTo('checkout');" class="btn-gold px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider">
+            Rasmiylashtirish
+          </button>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       6. REUSABLE 3D PRODUCT CARD COMPONENT
+       ========================================================================== */
+    function renderProductCard(product) {
+      const isWished = state.wishlist.includes(product.id);
+      return `
+        <div class="tilt-card-wrapper">
+          <div class="tilt-card group rounded-3xl bg-carddark border border-white/10 flex flex-col h-full" data-tilt>
+            <div class="tilt-glare"></div>
+
+            <!-- Image Container -->
+            <div class="relative aspect-[4/5] overflow-hidden rounded-t-3xl bg-[#0d0d0d] cursor-pointer" onclick="openProductDetails('${product.id}')">
+              <img
+                src="${product.image}"
+                onerror="this.src='${getFallbackImage(product.name)}'"
+                alt="${product.name}"
+                loading="lazy"
+                class="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-700 ease-out"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-black/20 opacity-80"></div>
+
+              <!-- Top Badges -->
+              <div class="absolute top-4 left-4 flex flex-col gap-2 z-10">
+                ${product.badge ? `
+                  <span class="px-3 py-1 rounded-full text-[10px] font-bold tracking-[0.18em] uppercase bg-obsidian/85 backdrop-blur-md border border-gold/50 text-gold shadow-lg">
+                    ${product.badge}
+                  </span>
+                ` : ''}
+                ${product.oldPrice ? `
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-gold text-obsidian">
+                    -${Math.round((1 - product.price / product.oldPrice) * 100)}%
+                  </span>
+                ` : ''}
+              </div>
+
+              <!-- Wishlist Button -->
+              <button
+                onclick="event.stopPropagation(); toggleWishlist('${product.id}')"
+                aria-label="Sevimlilarga qo'shish"
+                class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-obsidian/75 backdrop-blur-md border ${isWished ? 'border-gold text-gold' : 'border-white/15 text-white hover:border-gold hover:text-gold'} flex items-center justify-center transition-all duration-300 hover:scale-110"
+              >
+                <i class="${isWished ? 'fa-solid' : 'fa-regular'} fa-heart text-sm"></i>
+              </button>
+
+              <!-- Quick Action Overlay -->
+              <div class="absolute bottom-4 inset-x-4 z-10 flex gap-2 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                <button
+                  onclick="event.stopPropagation(); addToCart('${product.id}')"
+                  class="flex-1 btn-gold py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  <i class="fa-solid fa-bag-shopping"></i> Savatchaga
+                </button>
+                <button
+                  onclick="event.stopPropagation(); openProductDetails('${product.id}')"
+                  title="Batafsil"
+                  class="w-10 h-10 rounded-xl bg-obsidian/90 border border-gold/40 text-gold hover:bg-gold hover:text-obsidian flex items-center justify-center transition"
+                >
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="p-5 flex-1 flex flex-col justify-between tilt-content-lift">
+              <div>
+                <div class="flex items-center justify-between text-[11px] uppercase tracking-[0.16em] text-gold/80 mb-1.5">
+                  <span>${product.category}</span>
+                  <span class="flex items-center gap-1 text-gold-light">
+                    <i class="fa-solid fa-star text-[10px] text-gold"></i> ${product.rating}
+                  </span>
+                </div>
+                <h3 onclick="openProductDetails('${product.id}')" class="font-serif text-lg font-semibold text-white group-hover:text-gold-light transition cursor-pointer line-clamp-1">
+                  ${product.name}
+                </h3>
+                <p class="text-xs text-neutral-400 mt-1 line-clamp-2 leading-relaxed">${product.material}</p>
+              </div>
+
+              <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between">
+                <div class="flex items-baseline gap-2">
+                  <span class="text-lg font-bold text-gold">${formatPrice(product.price)}</span>
+                  ${product.oldPrice ? `<span class="text-xs text-neutral-500 line-through">${formatPrice(product.oldPrice)}</span>` : ''}
+                </div>
+                <button onclick="openProductDetails('${product.id}')" class="text-xs text-neutral-300 hover:text-gold font-medium flex items-center gap-1 transition">
+                  Tafsilotlar <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       7. NAVIGATION & VIEW ROUTER (ALL 10 SECTIONS)
+       ========================================================================== */
+    function navigateTo(view, options = {}) {
+      state.currentView = view;
+
+      if (options.category) {
+        state.filters.category = options.category;
+      }
+      if (options.tab) {
+        state.accountTab = options.tab;
+      }
+
+      // Highlight active nav item
+      document.querySelectorAll('.nav-link').forEach(btn => {
+        const isTarget = btn.getAttribute('data-nav') === view;
+        btn.classList.toggle('text-gold', isTarget);
+        btn.classList.toggle('text-neutral-300', !isTarget);
+      });
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderCurrentView();
+
+      if (options.focusSearch) {
+        setTimeout(() => {
+          const searchInput = document.getElementById('shop-search-input');
+          if (searchInput) searchInput.focus();
+        }, 120);
+      }
+    }
+
+    function openProductDetails(productId) {
+      state.selectedProductId = productId;
+      navigateTo('product-details');
+    }
+
+    function renderCurrentView() {
+      const root = document.getElementById('app-root');
+      let html = '';
+
+      switch (state.currentView) {
+        case 'home':
+          html = renderHomeView();
+          break;
+        case 'shop':
+          html = renderShopView();
+          break;
+        case 'categories':
+          html = renderCategoriesView();
+          break;
+        case 'new-arrivals':
+          html = renderFilteredShowcaseView({
+            eyebrow: 'KOLLEKSIYA 2026',
+            title: 'Yangi Kelganlar',
+            subtitle: 'Parij, Milan va Jeneva podiumlaridan endigina yetib kelgan eng so‘nggi hashamatli namunalar.',
+            products: state.products.filter(p => p.isNew)
+          });
+          break;
+        case 'trending':
+          html = renderFilteredShowcaseView({
+            eyebrow: 'ENG KO‘P TANLANGANLAR',
+            title: 'Trenddagi Mahsulotlar',
+            subtitle: 'VIP mijozlarimiz orasida eng yuqori talabga ega bo‘lgan bestseller buyumlar.',
+            products: [...state.products].filter(p => p.isTrending).sort((a, b) => b.sales - a.sales)
+          });
+          break;
+        case 'product-details':
+          html = renderProductDetailsView();
+          break;
+        case 'wishlist':
+          html = renderWishlistView();
+          break;
+        case 'cart':
+          html = renderCartPageView();
+          break;
+        case 'checkout':
+          html = renderCheckoutView();
+          break;
+        case 'account':
+          html = renderAccountView();
+          break;
+        default:
+          html = renderHomeView();
+      }
+
+      root.innerHTML = `<div class="view-transition">${html}</div>`;
+      init3DTiltCards();
+      attachCursorHoverListeners();
+    }
+
+    /* ==========================================================================
+       VIEW 1: HOME (BOSH SAHIFA)
+       ========================================================================== */
+    function renderHomeView() {
+      const newArrivals = state.products.filter(p => p.isNew).slice(0, 4);
+      const trendingItems = [...state.products].filter(p => p.isTrending).sort((a, b) => b.sales - a.sales).slice(0, 4);
+
+      return `
+        <!-- FULL-WIDTH LUXURY FASHION HERO BANNER -->
+        <section class="relative min-h-[86vh] flex items-center overflow-hidden border-b border-gold/20">
+          <!-- Background Fashion Editorial Image -->
+          <div class="absolute inset-0 z-0">
+            <img
+              src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1920&q=85"
+              onerror="this.src='https://placehold.co/1920x1080/0a0a0a/D4AF37?text=LUXORA+HAUTE+COUTURE'"
+              alt="LUXORA Fashion Banner"
+              class="w-full h-full object-cover object-center animate-hero-bg opacity-55"
+            />
+            <div class="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-obsidian/40"></div>
+          </div>
+
+          <!-- Decorative Gold Glow Orbs -->
+          <div class="absolute top-1/4 right-1/4 w-96 h-96 bg-gold/10 rounded-full blur-[130px] pointer-events-none"></div>
+
+          <!-- Hero Content -->
+          <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
+            <div class="max-w-2xl space-y-7">
+              <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/40 backdrop-blur-md">
+                <span class="w-2 h-2 rounded-full bg-gold animate-ping"></span>
+                <span class="text-[11px] font-semibold uppercase tracking-[0.25em] text-gold-light">Kuz / Qish 2026 Eksklyuziv Kolleksiya</span>
+              </div>
+
+              <h1 class="font-display text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight">
+                Hashamat — Bu <br />
+                <span class="gold-gradient-text italic font-serif font-semibold">Abadiy San’at</span>
+              </h1>
+
+              <p class="text-base sm:text-lg text-neutral-300 leading-relaxed max-w-xl font-light">
+                LUXORA bilan o‘z maqomingizni ta’kidlang. Shveysariya soatlari, Italiya charm buyumlari va noyob parfyumeriya olamining eng sara durdonalari bir makonda.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-4 pt-2">
+                <button onclick="navigateTo('shop')" class="btn-gold px-8 py-4 rounded-full text-xs sm:text-sm font-bold uppercase tracking-[0.2em] flex items-center gap-3">
+                  Kolleksiyani Ko‘rish <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button onclick="navigateTo('new-arrivals')" class="px-8 py-4 rounded-full border border-white/25 hover:border-gold bg-white/5 hover:bg-gold/10 backdrop-blur-md text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] text-white hover:text-gold transition">
+                  Yangi Kelganlar
+                </button>
+              </div>
+
+              <!-- Luxury Metrics -->
+              <div class="grid grid-cols-3 gap-6 pt-8 border-t border-white/15 max-w-lg">
+                <div>
+                  <div class="font-display text-2xl sm:text-3xl font-bold text-gold">100%</div>
+                  <div class="text-xs text-neutral-400 mt-1">Original Sertifikat</div>
+                </div>
+                <div>
+                  <div class="font-display text-2xl sm:text-3xl font-bold text-gold">24/7</div>
+                  <div class="text-xs text-neutral-400 mt-1">VIP Konsyerj</div>
+                </div>
+                <div>
+                  <div class="font-display text-2xl sm:text-3xl font-bold text-gold">50+</div>
+                  <div class="text-xs text-neutral-400 mt-1">Nufuzli Brendlar</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FEATURED CATEGORIES PREVIEW -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+            <div>
+              <span class="text-xs uppercase tracking-[0.28em] text-gold font-semibold">Eksklyuziv Yo‘nalishlar</span>
+              <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">Hashamatli Kategoriyalar</h2>
+            </div>
+            <button onclick="navigateTo('categories')" class="text-xs uppercase tracking-[0.2em] text-gold hover:text-gold-light font-semibold flex items-center gap-2 self-start sm:self-auto">
+              Barcha kategoriyalar <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            ${CATEGORIES_META.map(cat => `
+              <div onclick="navigateTo('shop', { category: '${cat.id.replace("'", "\\'")}' })" class="group relative rounded-2xl overflow-hidden aspect-[3/4] border border-white/10 hover:border-gold/60 cursor-pointer transition-all duration-500">
+                <img src="${cat.image}" onerror="this.src='${getFallbackImage(cat.title)}'" alt="${cat.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/40 to-transparent"></div>
+                <div class="absolute inset-x-0 bottom-0 p-4 text-center">
+                  <div class="w-8 h-8 mx-auto mb-2 rounded-full bg-gold/20 border border-gold/40 flex items-center justify-center text-gold text-xs group-hover:bg-gold group-hover:text-obsidian transition">
+                    <i class="fa-solid ${cat.icon}"></i>
+                  </div>
+                  <h3 class="font-serif text-base font-semibold text-white group-hover:text-gold transition">${cat.title}</h3>
+                  <p class="text-[10px] text-neutral-400 mt-0.5">${cat.subtitle}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- NEW ARRIVALS SHOWCASE -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+            <div>
+              <span class="text-xs uppercase tracking-[0.28em] text-gold font-semibold">Yangi Mavsum</span>
+              <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">Yangi Kelgan Durdonalar</h2>
+            </div>
+            <button onclick="navigateTo('new-arrivals')" class="text-xs uppercase tracking-[0.2em] text-gold hover:text-gold-light font-semibold flex items-center gap-2">
+              Hammasini ko‘rish <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+            ${newArrivals.map(renderProductCard).join('')}
+          </div>
+        </section>
+
+        <!-- EDITORIAL PROMO BANNER -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div class="relative rounded-3xl overflow-hidden border border-gold/30 bg-gradient-to-r from-[#141109] via-[#1b160b] to-[#0d0d0d] p-8 sm:p-14">
+            <div class="grid lg:grid-cols-2 gap-10 items-center relative z-10">
+              <div class="space-y-5">
+                <span class="inline-block px-3.5 py-1 rounded-full bg-gold/15 border border-gold/40 text-gold text-xs uppercase tracking-[0.22em]">VIP Imtiyoz</span>
+                <h2 class="font-display text-3xl sm:text-5xl font-bold leading-tight">
+                  Birinchi Buyurtmangizga <span class="gold-gradient-text">10% Maxsus Chegirma</span>
+                </h2>
+                <p class="text-neutral-300 text-sm sm:text-base leading-relaxed">
+                  Savatchada <span class="text-gold font-bold tracking-wider">LUXORA10</span> promo-kodidan foydalaning va shaxsiy sovg‘a qadoqlash hamda sug‘urtalangan kuryer xizmatiga ega bo‘ling.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-4">
+                  <button onclick="applyPromoCode('LUXORA10'); navigateTo('shop');" class="btn-gold px-7 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest">
+                    Kodni Qo‘llash &amp; Xarid Qilish
+                  </button>
+                </div>
+              </div>
+              <div class="relative h-64 sm:h-80 rounded-2xl overflow-hidden border border-gold/25">
+                <img src="https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?auto=format&fit=crop&w=1000&q=80" onerror="this.src='${getFallbackImage('VIP LUXURY')}'" alt="Luxury Watch" class="w-full h-full object-cover" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-6">
+                  <div>
+                    <p class="text-xs uppercase tracking-widest text-gold">Cheklangan Seriya</p>
+                    <p class="font-serif text-xl text-white font-semibold">Aurelius Royal 18K Gold Edition</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TRENDING ITEMS -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+            <div>
+              <span class="text-xs uppercase tracking-[0.28em] text-gold font-semibold">Eng Yuqori Reyting</span>
+              <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2">Trenddagi Mahsulotlar</h2>
+            </div>
+            <button onclick="navigateTo('trending')" class="text-xs uppercase tracking-[0.2em] text-gold hover:text-gold-light font-semibold flex items-center gap-2">
+              Barcha trendlar <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+            ${trendingItems.map(renderProductCard).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 2: SHOP (DO'KON — SEARCH, CATEGORY FILTER, PRICE SORT & RANGE)
+       ========================================================================== */
+    function getFilteredShopProducts() {
+      let list = [...state.products];
+
+      // Search filter
+      if (state.filters.search.trim()) {
+        const q = state.filters.search.toLowerCase();
+        list = list.filter(p =>
+          p.name.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q) ||
+          p.material.toLowerCase().includes(q)
+        );
+      }
+
+      // Category filter
+      if (state.filters.category && state.filters.category !== 'Barchasi') {
+        list = list.filter(p => p.category === state.filters.category);
+      }
+
+      // Max price filter
+      list = list.filter(p => p.price <= state.filters.maxPrice);
+
+      // Sorting
+      switch (state.filters.sort) {
+        case 'price-asc':
+          list.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-desc':
+          list.sort((a, b) => b.price - a.price);
+          break;
+        case 'newest':
+          list.sort((a, b) => (b.isNew === a.isNew ? 0 : b.isNew ? 1 : -1));
+          break;
+        case 'rating':
+          list.sort((a, b) => b.rating - a.rating);
+          break;
+      }
+
+      return list;
+    }
+
+    function updateShopFilter(key, value) {
+      state.filters[key] = value;
+      const gridContainer = document.getElementById('shop-products-grid');
+      const countEl = document.getElementById('shop-results-count');
+      if (gridContainer) {
+        const filtered = getFilteredShopProducts();
+        if (countEl) countEl.textContent = `${filtered.length} ta mahsulot topildi`;
+        gridContainer.innerHTML = filtered.length
+          ? filtered.map(renderProductCard).join('')
+          : `
+            <div class="col-span-full py-20 text-center bg-carddark/50 rounded-3xl border border-white/10">
+              <i class="fa-solid fa-magnifying-glass text-4xl text-gold/50 mb-4"></i>
+              <h3 class="font-serif text-2xl text-white mb-2">Mos mahsulot topilmadi</h3>
+              <p class="text-sm text-neutral-400 mb-6">Qidiruv so‘zini o‘zgartiring yoki filtrlarni tozalang.</p>
+              <button onclick="resetShopFilters()" class="btn-gold px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest">Filtrlarni tozalash</button>
+            </div>
+          `;
+        init3DTiltCards();
+        attachCursorHoverListeners();
+      } else {
+        renderCurrentView();
+      }
+    }
+
+    function resetShopFilters() {
+      state.filters = {
+        search: '',
+        category: 'Barchasi',
+        sort: 'featured',
+        maxPrice: 12000
+      };
+      renderCurrentView();
+    }
+
+    function renderShopView() {
+      const categories = ['Barchasi', ...CATEGORIES_META.map(c => c.id)];
+      const filteredProducts = getFilteredShopProducts();
+
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <!-- Page Header -->
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="text-xs uppercase tracking-[0.3em] text-gold font-semibold">LUXORA KATALOG</span>
+            <h1 class="font-display text-4xl sm:text-5xl font-bold mt-2">Hashamatli Do'kon</h1>
+            <p class="text-neutral-400 text-sm sm:text-base mt-3">Sichqonchani mahsulot kartalari ustiga olib boring va 3D interaktiv jiloni his eting.</p>
+          </div>
+
+          <!-- Filter & Search Control Panel -->
+          <div class="bg-carddark border border-gold/20 rounded-3xl p-5 sm:p-7 mb-10 space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+              <!-- Search Input -->
+              <div class="md:col-span-5 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gold/80 text-sm"></i>
+                <input
+                  id="shop-search-input"
+                  type="text"
+                  value="${state.filters.search}"
+                  oninput="updateShopFilter('search', this.value)"
+                  placeholder="Mahsulot nomi, brend yoki material qidirish..."
+                  class="w-full pl-11 pr-4 py-3 rounded-2xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm text-white placeholder-neutral-500"
+                />
+              </div>
+
+              <!-- Sort Dropdown -->
+              <div class="md:col-span-4">
+                <select
+                  onchange="updateShopFilter('sort', this.value)"
+                  class="w-full px-4 py-3 rounded-2xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm text-white cursor-pointer"
+                >
+                  <option value="featured" ${state.filters.sort === 'featured' ? 'selected' : ''}>Saralash: Tavsiya etilgan</option>
+                  <option value="price-asc" ${state.filters.sort === 'price-asc' ? 'selected' : ''}>Narx: Arzonroqdan qimmatga</option>
+                  <option value="price-desc" ${state.filters.sort === 'price-desc' ? 'selected' : ''}>Narx: Qimmatdan arzonga</option>
+                  <option value="newest" ${state.filters.sort === 'newest' ? 'selected' : ''}>Yangi kelganlar birinchi</option>
+                  <option value="rating" ${state.filters.sort === 'rating' ? 'selected' : ''}>Eng yuqori reyting</option>
+                </select>
+              </div>
+
+              <!-- Max Price Slider -->
+              <div class="md:col-span-3 bg-obsidian border border-white/10 rounded-2xl px-4 py-2.5">
+                <div class="flex justify-between text-xs mb-1">
+                  <span class="text-neutral-400">Maks. narx:</span>
+                  <span id="max-price-label" class="text-gold font-bold">${formatPrice(state.filters.maxPrice)}</span>
+                </div>
+                <input
+                  type="range"
+                  min="300"
+                  max="12000"
+                  step="100"
+                  value="${state.filters.maxPrice}"
+                  oninput="document.getElementById('max-price-label').textContent = '$' + Number(this.value).toLocaleString(); updateShopFilter('maxPrice', Number(this.value))"
+                  class="w-full accent-[#D4AF37] cursor-pointer"
+                />
+              </div>
+            </div>
+
+            <!-- Category Pills -->
+            <div class="flex items-center justify-between flex-wrap gap-3 pt-2 border-t border-white/10">
+              <div class="flex flex-wrap gap-2">
+                ${categories.map(cat => {
+                  const active = state.filters.category === cat;
+                  return `
+                    <button
+                      onclick="state.filters.category = '${cat.replace("'", "\\'")}'; renderCurrentView();"
+                      class="px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition ${active ? 'btn-gold' : 'bg-obsidian border border-white/15 text-neutral-300 hover:border-gold/50 hover:text-gold'}"
+                    >
+                      ${cat}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+              <span id="shop-results-count" class="text-xs text-neutral-400">${filteredProducts.length} ta mahsulot topildi</span>
+            </div>
+          </div>
+
+          <!-- Products Grid -->
+          <div id="shop-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+            ${filteredProducts.length
+              ? filteredProducts.map(renderProductCard).join('')
+              : `
+                <div class="col-span-full py-20 text-center bg-carddark/50 rounded-3xl border border-white/10">
+                  <i class="fa-solid fa-magnifying-glass text-4xl text-gold/50 mb-4"></i>
+                  <h3 class="font-serif text-2xl text-white mb-2">Mos mahsulot topilmadi</h3>
+                  <p class="text-sm text-neutral-400 mb-6">Qidiruv so‘zini o‘zgartiring yoki filtrlarni tozalang.</p>
+                  <button onclick="resetShopFilters()" class="btn-gold px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest">Filtrlarni tozalash</button>
+                </div>
+              `
+            }
+          </div>
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 3: CATEGORIES (KATEGORIYALAR)
+       ========================================================================== */
+    function renderCategoriesView() {
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="text-xs uppercase tracking-[0.3em] text-gold font-semibold">BO'LIMLAR BO'YICHA XARID</span>
+            <h1 class="font-display text-4xl sm:text-5xl font-bold mt-2">Eksklyuziv Kategoriyalar</h1>
+            <p class="text-neutral-400 text-sm sm:text-base mt-3">Har bir kategoriya o‘z sohasining eng yuqori cho‘qqisidagi san’at asarlarini o‘zida mujassam etgan.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            ${CATEGORIES_META.map(cat => {
+              const count = state.products.filter(p => p.category === cat.id).length;
+              return `
+                <div onclick="navigateTo('shop', { category: '${cat.id.replace("'", "\\'")}' })" class="tilt-card-wrapper cursor-pointer">
+                  <div class="tilt-card group relative h-96 rounded-3xl overflow-hidden border border-white/15 hover:border-gold">
+                    <div class="tilt-glare"></div>
+                    <img src="${cat.image}" onerror="this.src='${getFallbackImage(cat.title)}'" alt="${cat.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/50 to-transparent"></div>
+                    <div class="absolute inset-0 p-8 flex flex-col justify-between tilt-content-lift">
+                      <div class="flex justify-between items-center">
+                        <span class="px-3.5 py-1 rounded-full bg-obsidian/80 backdrop-blur-md border border-gold/40 text-gold text-xs font-semibold">
+                          ${count} ta buyum
+                        </span>
+                        <div class="w-11 h-11 rounded-full bg-gold/20 border border-gold/50 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-obsidian transition">
+                          <i class="fa-solid ${cat.icon}"></i>
+                        </div>
+                      </div>
+                      <div>
+                        <p class="text-xs uppercase tracking-[0.22em] text-gold-light mb-1">${cat.subtitle}</p>
+                        <h2 class="font-display text-3xl font-bold text-white group-hover:text-gold transition">${cat.title}</h2>
+                        <div class="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-white group-hover:text-gold transition">
+                          Kolleksiyani ochish <i class="fa-solid fa-arrow-right group-hover:translate-x-1.5 transition-transform"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 4 & 5: NEW ARRIVALS & TRENDING SHOWCASE
+       ========================================================================== */
+    function renderFilteredShowcaseView({ eyebrow, title, subtitle, products }) {
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div class="text-center max-w-2xl mx-auto mb-14">
+            <span class="text-xs uppercase tracking-[0.3em] text-gold font-semibold">${eyebrow}</span>
+            <h1 class="font-display text-4xl sm:text-5xl font-bold mt-2">${title}</h1>
+            <p class="text-neutral-400 text-sm sm:text-base mt-3">${subtitle}</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+            ${products.map(renderProductCard).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 6: PRODUCT DETAILS (MAHSULOT TAFSILOTLARI)
+       ========================================================================== */
+    let detailSelectedSize = null;
+    let detailQty = 1;
+
+    function renderProductDetailsView() {
+      const product = state.products.find(p => p.id === state.selectedProductId) || state.products[0];
+      if (!product) return `<div class="p-20 text-center">Mahsulot topilmadi.</div>`;
+
+      const sizes = product.sizes && product.sizes.length ? product.sizes : ['Standart'];
+      if (!detailSelectedSize || !sizes.includes(detailSelectedSize)) {
+        detailSelectedSize = sizes[0];
+      }
+
+      const isWished = state.wishlist.includes(product.id);
+      const related = state.products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-2 text-xs text-neutral-400 mb-8">
+            <button onclick="navigateTo('home')" class="hover:text-gold">Bosh sahifa</button>
+            <span>/</span>
+            <button onclick="navigateTo('shop', { category: '${product.category.replace("'", "\\'")}' })" class="hover:text-gold">${product.category}</button>
+            <span>/</span>
+            <span class="text-gold">${product.name}</span>
+          </div>
+
+          <!-- Main Product Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <!-- Left Image Showcase -->
+            <div class="lg:col-span-6">
+              <div class="relative rounded-3xl overflow-hidden border border-gold/25 bg-carddark aspect-[4/5] group">
+                <img src="${product.image}" onerror="this.src='${getFallbackImage(product.name)}'" alt="${product.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                ${product.badge ? `
+                  <span class="absolute top-6 left-6 px-4 py-1.5 rounded-full bg-obsidian/85 backdrop-blur-md border border-gold/50 text-gold text-xs font-bold tracking-[0.2em] uppercase">
+                    ${product.badge}
+                  </span>
+                ` : ''}
+              </div>
+            </div>
+
+            <!-- Right Details & Purchase Controls -->
+            <div class="lg:col-span-6 space-y-6">
+              <div>
+                <div class="flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-gold font-semibold mb-2">
+                  <span>${product.category}</span>
+                  <span>•</span>
+                  <span class="flex items-center gap-1 text-gold-light"><i class="fa-solid fa-star text-gold"></i> ${product.rating} (${product.sales} ta sotilgan)</span>
+                </div>
+                <h1 class="font-serif text-3xl sm:text-5xl font-bold text-white leading-tight">${product.name}</h1>
+              </div>
+
+              <!-- Price -->
+              <div class="flex items-baseline gap-4 pb-6 border-b border-white/10">
+                <span class="font-display text-3xl sm:text-4xl font-bold text-gold">${formatPrice(product.price)}</span>
+                ${product.oldPrice ? `<span class="text-lg text-neutral-500 line-through">${formatPrice(product.oldPrice)}</span>` : ''}
+                <span class="ml-auto text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+                  <i class="fa-solid fa-check mr-1"></i> Omborda mavjud
+                </span>
+              </div>
+
+              <!-- Description -->
+              <p class="text-neutral-300 text-sm sm:text-base leading-relaxed">
+                ${product.description}
+              </p>
+
+              <!-- Material & Authenticity Box -->
+              <div class="p-4 rounded-2xl bg-white/[0.03] border border-gold/20 space-y-2 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-neutral-400">Material &amp; Tarkib:</span>
+                  <span class="text-gold-light font-medium text-right">${product.material}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-neutral-400">Kafolat:</span>
+                  <span class="text-white">2 Yillik Xalqaro LUXORA Kafolati</span>
+                </div>
+              </div>
+
+              <!-- Size / Variant Selector -->
+              <div>
+                <label class="block text-xs uppercase tracking-[0.2em] text-neutral-400 mb-3">O‘lcham / Variantni tanlang:</label>
+                <div class="flex flex-wrap gap-3">
+                  ${sizes.map(sz => `
+                    <button
+                      onclick="detailSelectedSize = '${sz}'; renderCurrentView();"
+                      class="px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider transition ${detailSelectedSize === sz ? 'btn-gold' : 'bg-carddark border border-white/15 text-neutral-300 hover:border-gold'}"
+                    >
+                      ${sz}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Quantity & Add to Cart -->
+              <div class="flex flex-col sm:flex-row gap-4 pt-3">
+                <div class="flex items-center justify-between sm:justify-center gap-4 px-5 py-3.5 rounded-2xl bg-carddark border border-white/15">
+                  <button onclick="detailQty = Math.max(1, detailQty - 1); renderCurrentView();" class="text-neutral-400 hover:text-gold text-lg px-2">-</button>
+                  <span class="font-bold text-base w-6 text-center">${detailQty}</span>
+                  <button onclick="detailQty += 1; renderCurrentView();" class="text-neutral-400 hover:text-gold text-lg px-2">+</button>
+                </div>
+
+                <button onclick="addToCart('${product.id}', detailQty, detailSelectedSize); detailQty = 1;" class="flex-1 btn-gold py-4 px-8 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-[0.2em] flex items-center justify-center gap-3">
+                  <i class="fa-solid fa-bag-shopping"></i> Savatchaga Qo‘shish
+                </button>
+
+                <button onclick="toggleWishlist('${product.id}')" class="py-4 px-5 rounded-2xl border ${isWished ? 'border-gold bg-gold/15 text-gold' : 'border-white/20 hover:border-gold text-white hover:text-gold'} transition flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider">
+                  <i class="${isWished ? 'fa-solid' : 'fa-regular'} fa-heart text-base"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Related Products -->
+          ${related.length ? `
+            <div class="mt-24 pt-14 border-t border-white/10">
+              <h2 class="font-serif text-2xl sm:text-3xl font-bold mb-8">O‘xshash Hashamatli Mahsulotlar</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+                ${related.map(renderProductCard).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 7: WISHLIST (SEVIMLILAR RO'YXATI)
+       ========================================================================== */
+    function renderWishlistView() {
+      const wishedProducts = state.products.filter(p => state.wishlist.includes(p.id));
+
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+            <div>
+              <span class="text-xs uppercase tracking-[0.3em] text-gold font-semibold">SHAXSIY TANLOV</span>
+              <h1 class="font-display text-4xl sm:text-5xl font-bold mt-2">Sevimlilar Ro'yxati</h1>
+            </div>
+            <span class="text-sm text-neutral-400">${wishedProducts.length} ta saqlangan mahsulot</span>
+          </div>
+
+          ${wishedProducts.length ? `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
+              ${wishedProducts.map(renderProductCard).join('')}
+            </div>
+          ` : `
+            <div class="py-24 text-center rounded-3xl bg-carddark border border-white/10">
+              <div class="w-20 h-20 mx-auto rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center mb-5">
+                <i class="fa-regular fa-heart text-3xl text-gold"></i>
+              </div>
+              <h3 class="font-serif text-2xl font-semibold mb-2">Sevimlilar ro‘yxatingiz bo‘sh</h3>
+              <p class="text-sm text-neutral-400 max-w-md mx-auto mb-7">Yoqtirgan mahsulotlaringizdagi yurakcha belgisini bosing va ularni keyinchalik xarid qilish uchun saqlab qo‘ying.</p>
+              <button onclick="navigateTo('shop')" class="btn-gold px-7 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest">Do‘konga o‘tish</button>
+            </div>
+          `}
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 8: SHOPPING CART FULL PAGE (SAVATCHA HISOB-KITOBI)
+       ========================================================================== */
+    function renderCartPageView() {
+      const { subtotal, discount, shipping, total, hasDiscount } = calculateCartTotals();
+
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div class="mb-10">
+            <span class="text-xs uppercase tracking-[0.3em] text-gold font-semibold">XARID SAVATCHASI</span>
+            <h1 class="font-display text-4xl sm:text-5xl font-bold mt-2">Sizning Savatchangiz</h1>
+          </div>
+
+          ${state.cart.length === 0 ? `
+            <div class="py-24 text-center rounded-3xl bg-carddark border border-white/10">
+              <i class="fa-solid fa-bag-shopping text-5xl text-gold/50 mb-5"></i>
+              <h3 class="font-serif text-2xl font-semibold mb-2">Savatchangizda hali mahsulot yo‘q</h3>
+              <p class="text-sm text-neutral-400 mb-7">LUXORA kolleksiyasidan eksklyuziv buyumlarni tanlang.</p>
+              <button onclick="navigateTo('shop')" class="btn-gold px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest">Do‘konga qaytish</button>
+            </div>
+          ` : `
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+              <!-- Cart Items Table -->
+              <div class="lg:col-span-8 space-y-4">
+                ${state.cart.map((item, idx) => `
+                  <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5 p-5 rounded-3xl bg-carddark border border-white/10 hover:border-gold/30 transition">
+                    <img src="${item.image}" onerror="this.src='${getFallbackImage(item.name)}'" alt="${item.name}" class="w-24 h-28 object-cover rounded-2xl bg-neutral-900 shrink-0" />
+                    <div class="flex-1 min-w-0">
+                      <span class="text-[11px] uppercase tracking-widest text-gold">${item.category}</span>
+                      <h3 class="font-serif text-xl font-semibold text-white mt-0.5">${item.name}</h3>
+                      <p class="text-xs text-neutral-400 mt-1">O‘lcham: <span class="text-white">${item.size}</span> • Birlik narxi: ${formatPrice(item.price)}</p>
+                    </div>
+                    <div class="flex items-center justify-between w-full sm:w-auto gap-6 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/10">
+                      <div class="flex items-center gap-3 bg-obsidian border border-white/15 rounded-full px-3 py-1.5">
+                        <button onclick="updateCartQty(${idx}, -1)" class="w-6 h-6 rounded-full hover:bg-gold/20 text-neutral-300 hover:text-gold">-</button>
+                        <span class="text-sm font-bold w-5 text-center">${item.qty}</span>
+                        <button onclick="updateCartQty(${idx}, 1)" class="w-6 h-6 rounded-full hover:bg-gold/20 text-neutral-300 hover:text-gold">+</button>
+                      </div>
+                      <div class="text-right">
+                        <div class="font-bold text-lg text-gold">${formatPrice(item.price * item.qty)}</div>
+                        <button onclick="removeFromCart(${idx})" class="text-xs text-neutral-500 hover:text-rose-400 transition mt-1">
+                          <i class="fa-solid fa-trash mr-1"></i> O‘chirish
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+
+              <!-- Order Summary Box -->
+              <div class="lg:col-span-4 rounded-3xl bg-carddark border border-gold/30 p-7 space-y-6 sticky top-28">
+                <h2 class="font-serif text-2xl font-bold border-b border-white/10 pb-4">Buyurtma Hisob-kitobi</h2>
+
+                <!-- Promo Code -->
+                <div>
+                  <label class="block text-xs uppercase tracking-wider text-neutral-400 mb-2">Promo-kod (Sinash: LUXORA10)</label>
+                  <div class="flex gap-2">
+                    <input id="cart-promo-input" type="text" value="${state.promoCode}" placeholder="LUXORA10" class="flex-1 px-4 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm uppercase" />
+                    <button onclick="applyPromoCode(document.getElementById('cart-promo-input').value)" class="px-4 py-2.5 rounded-xl border border-gold/50 text-gold hover:bg-gold hover:text-obsidian text-xs font-bold uppercase transition">
+                      Qo‘llash
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-3 text-sm pt-2">
+                  <div class="flex justify-between text-neutral-400">
+                    <span>Mahsulotlar summasi:</span>
+                    <span class="text-white font-medium">${formatPrice(subtotal)}</span>
+                  </div>
+                  ${hasDiscount ? `
+                    <div class="flex justify-between text-emerald-400">
+                      <span>LUXORA10 Chegirma (-10%):</span>
+                      <span>-${formatPrice(discount)}</span>
+                    </div>
+                  ` : ''}
+                  <div class="flex justify-between text-neutral-400">
+                    <span>Sug‘urtalangan VIP Yetkazish:</span>
+                    <span class="text-gold-light">${shipping === 0 ? 'Bepul' : formatPrice(shipping)}</span>
+                  </div>
+                  <div class="flex justify-between text-lg font-bold pt-4 border-t border-white/10">
+                    <span>Umumiy Jami:</span>
+                    <span class="text-gold text-2xl">${formatPrice(total)}</span>
+                  </div>
+                </div>
+
+                <button onclick="navigateTo('checkout')" class="w-full btn-gold py-4 rounded-2xl text-xs font-bold uppercase tracking-[0.2em]">
+                  Buyurtmani Rasmiylashtirish <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+              </div>
+            </div>
+          `}
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 9: CHECKOUT (BUYURTMA BERISH)
+       ========================================================================== */
+    function handleCheckoutSubmit(e) {
+      e.preventDefault();
+      if (state.cart.length === 0) {
+        showToast('Savatchangiz bo‘sh!', 'error');
+        return;
+      }
+
+      const formData = new FormData(e.target);
+      const { total } = calculateCartTotals();
+
+      const newOrder = {
+        id: 'ORD-' + Math.floor(10000 + Math.random() * 90000),
+        date: new Date().toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+        status: 'Tasdiqlandi (VIP)',
+        total: total,
+        items: state.cart.map(i => ({ ...i })),
+        customer: formData.get('fullName'),
+        phone: formData.get('phone'),
+        address: `${formData.get('city')}, ${formData.get('address')}`,
+        payment: formData.get('payment')
+      };
+
+      state.orders.unshift(newOrder);
+      saveOrders();
+
+      state.cart = [];
+      state.promoCode = '';
+      saveCart();
+      savePromo();
+
+      showToast(`Buyurtma #${newOrder.id} muvaffaqiyatli qabul qilindi!`, 'success');
+      navigateTo('account', { tab: 'orders' });
+    }
+
+    function renderCheckoutView() {
+      if (state.cart.length === 0) {
+        return `
+          <section class="max-w-3xl mx-auto px-4 py-24 text-center">
+            <h2 class="font-serif text-3xl font-bold mb-4">Buyurtma berish uchun savatchangizda mahsulot bo‘lishi kerak</h2>
+            <button onclick="navigateTo('shop')" class="btn-gold px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest">Do‘konga o‘tish</button>
+          </section>
+        `;
+      }
+
+      const { subtotal, discount, shipping, total, hasDiscount } = calculateCartTotals();
+
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div class="mb-10">
+            <span class="text-xs uppercase tracking-[0.3em] text-gold font-semibold">XAVFSIZ TO'LOV</span>
+            <h1 class="font-display text-4xl sm:text-5xl font-bold mt-2">Buyurtmani Rasmiylashtirish</h1>
+          </div>
+
+          <form onsubmit="handleCheckoutSubmit(event)" class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            <!-- Customer Delivery & Payment Form -->
+            <div class="lg:col-span-7 bg-carddark border border-white/10 rounded-3xl p-6 sm:p-8 space-y-6">
+              <h2 class="font-serif text-2xl font-semibold text-gold">1. Yetkazib Berish Ma'lumotlari</h2>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-2">To‘liq ism-sharif *</label>
+                  <input name="fullName" type="text" required value="${state.user.name}" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm text-white" />
+                </div>
+                <div>
+                  <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-2">Telefon raqam *</label>
+                  <input name="phone" type="tel" required value="${state.user.phone}" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm text-white" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-2">Shahar / Viloyat *</label>
+                  <input name="city" type="text" required value="${state.user.city}" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm text-white" />
+                </div>
+                <div>
+                  <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-2">Aniq manzil *</label>
+                  <input name="address" type="text" required placeholder="Ko‘cha, uy, xonadon..." value="Amir Temur shoh ko‘chasi, 18-uy" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm text-white" />
+                </div>
+              </div>
+
+              <h2 class="font-serif text-2xl font-semibold text-gold pt-4 border-t border-white/10">2. To‘lov Usuli</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <label class="cursor-pointer">
+                  <input type="radio" name="payment" value="Bank Kartasi (Visa/Uzcard)" checked class="peer sr-only" />
+                  <div class="p-4 rounded-2xl bg-obsidian border border-white/15 peer-checked:border-gold peer-checked:bg-gold/10 text-center transition">
+                    <i class="fa-regular fa-credit-card text-gold text-xl mb-2"></i>
+                    <div class="text-xs font-semibold">Bank Kartasi</div>
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="payment" value="VIP Kuryerga Naqd" class="peer sr-only" />
+                  <div class="p-4 rounded-2xl bg-obsidian border border-white/15 peer-checked:border-gold peer-checked:bg-gold/10 text-center transition">
+                    <i class="fa-solid fa-money-bill-wave text-gold text-xl mb-2"></i>
+                    <div class="text-xs font-semibold">Naqd Pul</div>
+                  </div>
+                </label>
+                <label class="cursor-pointer">
+                  <input type="radio" name="payment" value="USDT / Crypto" class="peer sr-only" />
+                  <div class="p-4 rounded-2xl bg-obsidian border border-white/15 peer-checked:border-gold peer-checked:bg-gold/10 text-center transition">
+                    <i class="fa-brands fa-bitcoin text-gold text-xl mb-2"></i>
+                    <div class="text-xs font-semibold">Crypto VIP</div>
+                  </div>
+                </label>
+              </div>
+
+              <button type="submit" class="w-full btn-gold py-4 rounded-2xl text-xs sm:text-sm font-bold uppercase tracking-[0.2em] mt-4">
+                <i class="fa-solid fa-lock mr-2"></i> Buyurtmani Tasdiqlash (${formatPrice(total)})
+              </button>
+            </div>
+
+            <!-- Order Items Summary -->
+            <div class="lg:col-span-5 bg-carddark border border-gold/25 rounded-3xl p-6 sm:p-8 space-y-5">
+              <h3 class="font-serif text-xl font-bold border-b border-white/10 pb-3">Buyurtma Tarkibi (${state.cart.length})</h3>
+              <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
+                ${state.cart.map(item => `
+                  <div class="flex items-center justify-between gap-3 text-sm">
+                    <div class="flex items-center gap-3 min-w-0">
+                      <img src="${item.image}" onerror="this.src='${getFallbackImage(item.name)}'" class="w-12 h-14 rounded-xl object-cover shrink-0" />
+                      <div class="truncate">
+                        <div class="font-medium text-white truncate">${item.name}</div>
+                        <div class="text-xs text-neutral-400">${item.qty} x ${formatPrice(item.price)} (${item.size})</div>
+                      </div>
+                    </div>
+                    <span class="font-semibold text-gold shrink-0">${formatPrice(item.price * item.qty)}</span>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div class="border-t border-white/10 pt-4 space-y-2 text-sm">
+                <div class="flex justify-between text-neutral-400">
+                  <span>Oraliq summa:</span>
+                  <span class="text-white">${formatPrice(subtotal)}</span>
+                </div>
+                ${hasDiscount ? `
+                  <div class="flex justify-between text-emerald-400">
+                    <span>Chegirma (LUXORA10):</span>
+                    <span>-${formatPrice(discount)}</span>
+                  </div>
+                ` : ''}
+                <div class="flex justify-between text-neutral-400">
+                  <span>Yetkazib berish:</span>
+                  <span class="text-gold-light">${shipping === 0 ? 'Bepul' : formatPrice(shipping)}</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold pt-3 border-t border-white/10">
+                  <span>Jami:</span>
+                  <span class="text-gold text-2xl">${formatPrice(total)}</span>
+                </div>
+              </div>
+            </div>
+          </form>
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       VIEW 10: MY ACCOUNT, ORDER HISTORY & ADMIN PRODUCT MANAGEMENT
+       ========================================================================== */
+    function handleProfileUpdate(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      state.user = {
+        ...state.user,
+        name: fd.get('name'),
+        email: fd.get('email'),
+        phone: fd.get('phone'),
+        city: fd.get('city')
+      };
+      saveUser();
+      showToast('Shaxsiy profil ma’lumotlari yangilandi!', 'success');
+      renderCurrentView();
+    }
+
+    function handleAdminProductSubmit(e) {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const id = fd.get('productId');
+
+      const productData = {
+        id: id || ('lux-' + Date.now()),
+        name: fd.get('name'),
+        category: fd.get('category'),
+        price: Number(fd.get('price')),
+        oldPrice: fd.get('oldPrice') ? Number(fd.get('oldPrice')) : null,
+        rating: 5.0,
+        sales: id ? (state.products.find(p => p.id === id)?.sales || 12) : 1,
+        isNew: fd.get('isNew') === 'on',
+        isTrending: fd.get('isTrending') === 'on',
+        badge: fd.get('badge') || 'YANGI',
+        image: fd.get('image').trim() || getFallbackImage(fd.get('name')),
+        sizes: fd.get('sizes').split(',').map(s => s.trim()).filter(Boolean),
+        material: fd.get('material') || 'Eksklyuziv Premium Material',
+        description: fd.get('description') || 'LUXORA maxsus kolleksiyasidan eksklyuziv buyum.'
+      };
+
+      if (id) {
+        const idx = state.products.findIndex(p => p.id === id);
+        if (idx > -1) state.products[idx] = productData;
+        state.editingProductId = null;
+        showToast(`"${productData.name}" mahsuloti yangilandi!`, 'success');
+      } else {
+        state.products.unshift(productData);
+        showToast(`Yangi mahsulot "${productData.name}" katalogga qo‘shildi!`, 'gold');
+      }
+
+      saveProducts();
+      renderCurrentView();
+    }
+
+    function startEditProduct(id) {
+      state.editingProductId = id;
+      renderCurrentView();
+      const formEl = document.getElementById('admin-product-form');
+      if (formEl) formEl.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function deleteAdminProduct(id) {
+      const prod = state.products.find(p => p.id === id);
+      state.products = state.products.filter(p => p.id !== id);
+      state.wishlist = state.wishlist.filter(wId => wId !== id);
+      state.cart = state.cart.filter(c => c.id !== id);
+      saveProducts();
+      saveWishlist();
+      saveCart();
+      showToast(`"${prod ? prod.name : 'Mahsulot'}" o‘chirildi`, 'info');
+      renderCurrentView();
+    }
+
+    function resetDemoCatalog() {
+      state.products = [...DEFAULT_PRODUCTS];
+      state.editingProductId = null;
+      saveProducts();
+      showToast('Barcha demo mahsulotlar boshlang‘ich holatga qaytarildi!', 'gold');
+      renderCurrentView();
+    }
+
+    function renderAccountView() {
+      const editingProd = state.editingProductId ? state.products.find(p => p.id === state.editingProductId) : null;
+
+      return `
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <!-- VIP User Header Banner -->
+          <div class="rounded-3xl bg-gradient-to-r from-[#161209] via-carddark to-[#121212] border border-gold/30 p-6 sm:p-10 mb-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="flex items-center gap-5">
+              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-gold bg-gold/15 flex items-center justify-center font-display text-2xl sm:text-3xl font-bold text-gold shrink-0">
+                ${state.user.name.charAt(0)}
+              </div>
+              <div>
+                <span class="px-3 py-0.5 rounded-full bg-gold/20 border border-gold/40 text-gold text-[10px] font-bold tracking-[0.2em] uppercase">
+                  <i class="fa-solid fa-crown mr-1"></i> ${state.user.tier}
+                </span>
+                <h1 class="font-serif text-2xl sm:text-4xl font-bold text-white mt-1.5">${state.user.name}</h1>
+                <p class="text-xs sm:text-sm text-neutral-400">${state.user.email} • ${state.user.city}</p>
+              </div>
+            </div>
+
+            <!-- Tabs Navigation -->
+            <div class="flex flex-wrap gap-2">
+              <button onclick="state.accountTab = 'profile'; renderCurrentView();" class="px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition ${state.accountTab === 'profile' ? 'btn-gold' : 'bg-obsidian border border-white/15 text-neutral-300 hover:border-gold'}">
+                <i class="fa-regular fa-user mr-1.5"></i> Profil
+              </button>
+              <button onclick="state.accountTab = 'orders'; renderCurrentView();" class="px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition ${state.accountTab === 'orders' ? 'btn-gold' : 'bg-obsidian border border-white/15 text-neutral-300 hover:border-gold'}">
+                <i class="fa-solid fa-clock-rotate-left mr-1.5"></i> Buyurtmalar (${state.orders.length})
+              </button>
+              <button onclick="state.accountTab = 'admin'; renderCurrentView();" class="px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition ${state.accountTab === 'admin' ? 'btn-gold' : 'bg-obsidian border border-gold/40 text-gold hover:bg-gold/10'}">
+                <i class="fa-solid fa-sliders mr-1.5"></i> Admin Boshqaruv
+              </button>
+            </div>
+          </div>
+
+          <!-- TAB 1: PROFILE -->
+          ${state.accountTab === 'profile' ? `
+            <div class="max-w-2xl bg-carddark border border-white/10 rounded-3xl p-7 sm:p-9">
+              <h2 class="font-serif text-2xl font-bold mb-6">Shaxsiy Ma'lumotlarni Tahrirlash</h2>
+              <form onsubmit="handleProfileUpdate(event)" class="space-y-4">
+                <div>
+                  <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-1.5">Ism-sharif</label>
+                  <input name="name" type="text" required value="${state.user.name}" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm" />
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-1.5">Email</label>
+                    <input name="email" type="email" required value="${state.user.email}" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm" />
+                  </div>
+                  <div>
+                    <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-1.5">Telefon</label>
+                    <input name="phone" type="text" required value="${state.user.phone}" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs text-neutral-400 uppercase tracking-wider mb-1.5">Shahar</label>
+                  <input name="city" type="text" required value="${state.user.city}" class="w-full px-4 py-3 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none text-sm" />
+                </div>
+                <button type="submit" class="btn-gold px-7 py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest mt-2">
+                  Saqlash
+                </button>
+              </form>
+            </div>
+          ` : ''}
+
+          <!-- TAB 2: ORDER HISTORY -->
+          ${state.accountTab === 'orders' ? `
+            <div class="space-y-5">
+              <h2 class="font-serif text-2xl font-bold">Buyurtmalar Tarixi</h2>
+              ${state.orders.length === 0 ? `
+                <div class="p-12 text-center rounded-3xl bg-carddark border border-white/10 text-neutral-400">
+                  Hozircha buyurtmalar tarixi mavjud emas.
+                </div>
+              ` : state.orders.map(order => `
+                <div class="rounded-3xl bg-carddark border border-white/10 hover:border-gold/30 p-6 transition">
+                  <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
+                    <div>
+                      <span class="font-display text-lg font-bold text-gold">${order.id}</span>
+                      <span class="text-xs text-neutral-400 ml-3"><i class="fa-regular fa-calendar mr-1"></i> ${order.date}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                      <span class="px-3.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                        ${order.status}
+                      </span>
+                      <span class="font-bold text-lg text-white">${formatPrice(order.total)}</span>
+                    </div>
+                  </div>
+                  <div class="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm">
+                    <div class="space-y-1">
+                      ${order.items.map(it => `
+                        <div class="text-neutral-300">• <span class="text-white font-medium">${it.name}</span> (${it.size}) × ${it.qty}</div>
+                      `).join('')}
+                    </div>
+                    <div class="text-xs text-neutral-400 sm:text-right">
+                      <div>Qabul qiluvchi: <span class="text-neutral-200">${order.customer}</span></div>
+                      <div>Manzil: ${order.address}</div>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          <!-- TAB 3: ADMIN PRODUCT MANAGEMENT -->
+          ${state.accountTab === 'admin' ? `
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <!-- Add / Edit Product Form -->
+              <div id="admin-product-form" class="lg:col-span-5 bg-carddark border border-gold/30 rounded-3xl p-6 sm:p-7">
+                <div class="flex items-center justify-between mb-5">
+                  <h2 class="font-serif text-xl font-bold text-gold">
+                    ${editingProd ? 'Mahsulotni Tahrirlash' : '+ Yangi Mahsulot Qo‘shish'}
+                  </h2>
+                  ${editingProd ? `<button onclick="state.editingProductId = null; renderCurrentView();" class="text-xs text-neutral-400 hover:text-white">Bekor qilish</button>` : ''}
+                </div>
+
+                <form onsubmit="handleAdminProductSubmit(event)" class="space-y-3.5 text-sm">
+                  <input type="hidden" name="productId" value="${editingProd ? editingProd.id : ''}" />
+
+                  <div>
+                    <label class="block text-xs text-neutral-400 mb-1">Mahsulot nomi *</label>
+                    <input name="name" type="text" required value="${editingProd ? editingProd.name : ''}" placeholder="Masalan: Royale Gold Watch" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none" />
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs text-neutral-400 mb-1">Kategoriya *</label>
+                      <select name="category" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none">
+                        ${CATEGORIES_META.map(c => `<option value="${c.id}" ${editingProd && editingProd.category === c.id ? 'selected' : ''}>${c.title}</option>`).join('')}
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-neutral-400 mb-1">Badge (yorliq)</label>
+                      <input name="badge" type="text" value="${editingProd ? (editingProd.badge || '') : 'YANGI'}" placeholder="YANGI / TREND" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none" />
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs text-neutral-400 mb-1">Narx ($) *</label>
+                      <input name="price" type="number" required min="1" value="${editingProd ? editingProd.price : ''}" placeholder="1500" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none" />
+                    </div>
+                    <div>
+                      <label class="block text-xs text-neutral-400 mb-1">Eski narx ($ ixtiyoriy)</label>
+                      <input name="oldPrice" type="number" min="1" value="${editingProd && editingProd.oldPrice ? editingProd.oldPrice : ''}" placeholder="1900" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs text-neutral-400 mb-1">Rasm URL (Unsplash yoki to‘g‘ridan-to‘g‘ri link)</label>
+                    <input name="image" type="url" value="${editingProd ? editingProd.image : ''}" placeholder="https://images.unsplash.com/..." class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none" />
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-xs text-neutral-400 mb-1">Material</label>
+                      <input name="material" type="text" value="${editingProd ? editingProd.material : '18K Oltin & Charm'}" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none" />
+                    </div>
+                    <div>
+                      <label class="block text-xs text-neutral-400 mb-1">O‘lchamlar (vergul bilan)</label>
+                      <input name="sizes" type="text" value="${editingProd ? editingProd.sizes.join(', ') : 'S, M, L'}" class="w-full px-3.5 py-2.5 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none" />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-xs text-neutral-400 mb-1">Tavsif</label>
+                    <textarea name="description" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-obsidian border border-white/15 focus:border-gold focus:outline-none">${editingProd ? editingProd.description : ''}</textarea>
+                  </div>
+
+                  <div class="flex items-center gap-6 pt-1">
+                    <label class="flex items-center gap-2 text-xs text-neutral-300 cursor-pointer">
+                      <input type="checkbox" name="isNew" ${!editingProd || editingProd.isNew ? 'checked' : ''} class="accent-[#D4AF37]" /> Yangi kelganlar
+                    </label>
+                    <label class="flex items-center gap-2 text-xs text-neutral-300 cursor-pointer">
+                      <input type="checkbox" name="isTrending" ${editingProd && editingProd.isTrending ? 'checked' : ''} class="accent-[#D4AF37]" /> Trendda
+                    </label>
+                  </div>
+
+                  <button type="submit" class="w-full btn-gold py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest mt-2">
+                    ${editingProd ? 'O‘zgarishlarni Saqlash' : 'Katalogga Qo‘shish'}
+                  </button>
+                </form>
+              </div>
+
+              <!-- Product Catalog Management List -->
+              <div class="lg:col-span-7 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <h2 class="font-serif text-xl font-bold">Mavjud Mahsulotlar (${state.products.length})</h2>
+                  <button onclick="resetDemoCatalog()" class="px-4 py-2 rounded-xl border border-white/15 hover:border-gold text-xs text-neutral-300 hover:text-gold transition">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Demo ma'lumotlarni tiklash
+                  </button>
+                </div>
+
+                <div class="space-y-3 max-h-[680px] overflow-y-auto pr-1">
+                  ${state.products.map(p => `
+                    <div class="flex items-center justify-between gap-4 p-3.5 rounded-2xl bg-carddark border border-white/10 hover:border-gold/30 transition">
+                      <div class="flex items-center gap-3.5 min-w-0">
+                        <img src="${p.image}" onerror="this.src='${getFallbackImage(p.name)}'" class="w-14 h-16 rounded-xl object-cover shrink-0 bg-neutral-900" />
+                        <div class="min-w-0">
+                          <div class="font-serif font-semibold text-white truncate">${p.name}</div>
+                          <div class="text-xs text-neutral-400">${p.category} • <span class="text-gold font-bold">${formatPrice(p.price)}</span></div>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="startEditProduct('${p.id}')" title="Tahrirlash" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-gold/20 text-neutral-300 hover:text-gold flex items-center justify-center transition">
+                          <i class="fa-solid fa-pen text-xs"></i>
+                        </button>
+                        <button onclick="deleteAdminProduct('${p.id}')" title="O'chirish" class="w-9 h-9 rounded-xl bg-white/5 hover:bg-rose-500/20 text-neutral-300 hover:text-rose-400 flex items-center justify-center transition">
+                          <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          ` : ''}
+        </section>
+      `;
+    }
+
+    /* ==========================================================================
+       8. 3D INTERACTIVE HOVER ENGINE (MOUSE-TRACKING PERSPECTIVE & GLARE)
+       ========================================================================== */
+    function init3DTiltCards() {
+      const cards = document.querySelectorAll('[data-tilt]');
+      cards.forEach(card => {
+        const glare = card.querySelector('.tilt-glare');
+
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          const rotateX = ((y - centerY) / centerY) * -8;
+          const rotateY = ((x - centerX) / centerX) * 8;
+
+          card.style.transform = `rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+
+          if (glare) {
+            const percentX = (x / rect.width) * 100;
+            const percentY = (y / rect.height) * 100;
+            glare.style.background = `radial-gradient(circle at ${percentX}% ${percentY}%, rgba(243, 229, 171, 0.25), transparent 62%)`;
+          }
+        });
+
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        });
+      });
+    }
+
+    /* ==========================================================================
+       9. LUXURY GOLD CURSOR TRAIL & CUSTOM RING ENGINE
+       ========================================================================== */
+    function initGoldCursorTrail() {
+      const canvas = document.getElementById('cursor-trail-canvas');
+      const ring = document.getElementById('custom-cursor-ring');
+      if (!canvas || !ring) return;
+
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const particles = [];
+      let mouse = { x: -100, y: -100 };
+
+      window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+
+        ring.style.left = `${mouse.x}px`;
+        ring.style.top = `${mouse.y}px`;
+
+        // Spawn glowing gold trail particles
+        for (let i = 0; i < 2; i++) {
+          particles.push({
+            x: mouse.x + (Math.random() - 0.5) * 6,
+            y: mouse.y + (Math.random() - 0.5) * 6,
+            vx: (Math.random() - 0.5) * 0.8,
+            vy: (Math.random() - 0.5) * 0.8 - 0.2,
+            size: Math.random() * 3.2 + 1.2,
+            alpha: 0.95,
+            hue: Math.random() > 0.4 ? '#D4AF37' : '#F3E5AB'
+          });
+        }
+      });
+
+      function animateTrail() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.alpha -= 0.028;
+          p.size *= 0.96;
+
+          if (p.alpha <= 0.02) {
+            particles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.hue;
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = '#D4AF37';
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        requestAnimationFrame(animateTrail);
+      }
+
+      animateTrail();
+    }
+
+    function attachCursorHoverListeners() {
+      const ring = document.getElementById('custom-cursor-ring');
+      if (!ring) return;
+      const interactables = document.querySelectorAll('a, button, input, select, [data-tilt]');
+      interactables.forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hovered'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hovered'));
+      });
+    }
+
+    /* ==========================================================================
+       10. INITIALIZE APPLICATION ON WINDOW LOAD
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderCurrentView();
+      initGoldCursorTrail();
+    });
+  </script>
+</body>
+</html>
